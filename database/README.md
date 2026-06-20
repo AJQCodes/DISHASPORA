@@ -128,8 +128,8 @@ After all schema files have run successfully, seed the lookup tables:
 ## Group Members
 | Index No. | Student No. | Name | Role |
 |-----------|-------------|------|------|
-| 21120543 | 6181524 | QUAYE | Ann-Janelle Naa Ahimah | DATABASE
-| 21120828 | 6163124 | JAMALDEEN | Hikmat Ajaansuma | INTEGRATION AND PAYMENTS
-| 21121154 | 6141424 | ANTOBRE | Rebecca Frimpomaa | UI/UX & STYLE
-| 21121437 | 6170424 | NIMAKO | Afia Pokua | FRONTEND
-| 21121635 | 6127124 | ADDAI | Christabel | BACKEND
+| 21120543 | 6181524 | QUAYE Ann-Janelle Naa Ahimah | DATABASE
+| 21120828 | 6163124 | JAMALDEEN Hikmat Ajaansuma | INTEGRATION AND PAYMENTS
+| 21121154 | 6141424 | ANTOBRE Rebecca Frimpomaa | UI/UX & STYLE
+| 21121437 | 6170424 | NIMAKO Afia Pokua | FRONTEND
+| 21121635 | 6127124 | ADDAI Christabel | BACKEND
