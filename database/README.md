@@ -35,6 +35,9 @@ Open pgAdmin, select your `dishaspora` database, open the Query Tool and run eac
 | 9 | 009_create_reviews.sql | reviews |
 | 10 | 010_create_admin_actions.sql | admin_actions, content_flags |
 | 11 | 011_create_notifications.sql | notifications, chat_messages |
+|12 | 012_create_payments.sql | payments |
+| 13 | 013_create_cuisine_types.sql | cuisine_types |
+| 14 | 014_create_triggers.sql | rating update triggers |
 
 ### Step 2 — Run seed files
 After all schema files have run successfully, seed the lookup tables:
@@ -63,11 +66,17 @@ After all schema files have run successfully, seed the lookup tables:
 | recipe_media | Images, videos, and audio guides attached to a recipe |
 | saved_recipes | Recipes bookmarked by users |
 
+### Payments
+| Table | Description |
+|-------|-------------|
+| payments | Full payment audit trail for every order transaction |
+
 ### Lookup Tables
 | Table | Description |
 |-------|-------------|
 | countries | All 195 countries. is_active controls platform availability |
 | categories | Recipe categories: Local Dishes, Continental, Foreign Dishes, Drinks |
+| cuisine_types | Granular cuisine types e.g. Ghanaian, Italian, Japanese. Admin-managed |
 
 ### Marketplace Service
 | Table | Description |
@@ -104,6 +113,12 @@ After all schema files have run successfully, seed the lookup tables:
 |-------|-------------|
 | notifications | System alerts sent to users — drives the bell icon screen |
 | chat_messages | Premium cooking support conversations between users and vendors |
+
+### Triggers
+| Trigger | Description |
+|---------|-------------|
+| trigger_update_rating | Automatically updates average_rating and review_count on recipes and vendor_profiles after a review is inserted or updated |
+| trigger_update_rating_on_delete | Automatically recalculates average_rating and review_count after a review is deleted |
 
 ---
 
