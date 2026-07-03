@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: dishaspora-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dishaspora
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 55MB
+
+jwt:
+  secret: ${JWT_SECRET:dishaspora-dev-secret-key-please-change-in-production-4f8a2c1e9b7d6350a1b2c3d4e5f60718}
+  expiration-ms: 604800000
+
+paystack:
+  secret-key: ${PAYSTACK_SECRET_KEY:}
+  public-key: ${PAYSTACK_PUBLIC_KEY:}
+
+anthropic:
+  api-key: ${ANTHROPIC_API_KEY:}
+
+media:
+  upload-dir: ./uploads
+
+---
+spring:
+  config:
+    activate:
+      on-profile: h2
+  datasource:
+    url: jdbc:h2:file:./data/dishaspora;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect

@@ -1,171 +1,57 @@
-# Dishaspora Backend — Spring Boot API
+# Dishaspora
 
 > KNUST · Computer Science · CodeQuest 2026 · Group 12
 
----
+A culturally rich food ecosystem for Ghana and Nigeria: recipe discovery with calorie
+and meal-frequency guidance, a same-country food & ingredient marketplace with Paystack
+checkout, premium video/audio/chat and a grounded AI recipe assistant — plus an admin
+console for approvals, moderation and analytics.
 
-## Tech Stack
-- **Java 17** + **Spring Boot 3.2**
-- **Spring Security** + **JWT**
-- **Spring Data JPA** + **PostgreSQL**
-- **Maven**
-- **Lombok**
+## Monorepo layout
 
----
+| Folder | What it is | Stack |
+|---|---|---|
+| `backend/` | REST API, modular monolith (auth, recipe, marketplace, order, subscription, admin, ai, chat, media) | Java 17 · Spring Boot 3.3 · PostgreSQL/H2 · JWT · Paystack · Claude API |
+| `mobile/` | The Dishaspora app (iOS/Android) | React Native · Expo · TypeScript · expo-router · Reanimated |
+| `admin-web/` | Admin console (approvals, flags, users, analytics) | Vite · React · TypeScript |
+| `docs/` | `API.md` (REST contract), `DESIGN.md` (design system), `IMAGES.md` (image manifest) | — |
+| `scripts/` | Image generation/download utilities | Node |
 
-## Prerequisites
+## Quick start
 
-1. **Java 17+** — download from https://adoptium.net
-2. **Maven 3.9+** — download from https://maven.apache.org
-3. **PostgreSQL 14+** — download from https://postgresql.org
-
----
-
-## Database Setup
-
-```sql
--- Open psql or pgAdmin and run:
-CREATE DATABASE dishaspora;
-CREATE USER postgres WITH PASSWORD 'postgres';
-GRANT ALL PRIVILEGES ON DATABASE dishaspora TO postgres;
-```
-
-Or use pgAdmin (GUI) if you prefer.
-
----
-
-## Configuration
-
-Edit `src/main/resources/application.properties` if your DB credentials differ:
-
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/dishaspora
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-```
-
----
-
-## Run the Backend
-
+**Backend** (zero setup, embedded DB):
 ```bash
-# From the dishaspora-backend/ folder:
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=h2
+```
+or with PostgreSQL (database `dishaspora` on localhost): `mvn spring-boot:run`
 
-# Build
-mvn clean install -DskipTests
-
-# Run
-mvn spring-boot:run
+**Admin console:**
+```bash
+cd admin-web && npm install && npm run dev   # http://localhost:5173
 ```
 
-The API starts on **http://localhost:8080**
-
----
-
-## Auto-seeded on First Run
-
-When you start the app, it automatically creates:
-
-| What           | Value                          |
-|----------------|--------------------------------|
-| Admin email    | admin@dishaspora.com           |
-| Admin password | admin123                       |
-| Sample recipes | Jollof Rice, Waakye, Sushi... |
-
----
-
-## API Endpoints
-
-### Auth (public)
+**Mobile app:**
+```bash
+cd mobile && npm install && npx expo start
 ```
-POST /api/auth/register    { name, email, password, country }
-POST /api/auth/login       { email, password }  → { token, user }
-GET  /api/auth/me          (requires Bearer token)
-```
+Scan the QR with Expo Go. Demo mode is ON by default (`mobile/src/config.ts`) so the
+app is fully browsable without the backend; set `DEMO_MODE = false` and point
+`API_URL` at your PC's LAN IP to use the live API.
 
-### Recipes (public GET, auth POST)
-```
-GET  /api/recipes                   ?category=local&country=GH
-GET  /api/recipes/popular
-GET  /api/recipes/search            ?q=jollof
-GET  /api/recipes/{id}
-POST /api/recipes                   (VENDOR or ADMIN only)
-PUT  /api/recipes/{id}              (VENDOR or ADMIN only)
-DELETE /api/recipes/{id}            (ADMIN only)
-```
+## Seed accounts (created on first backend start)
 
-### Marketplace (public GET, auth POST)
-```
-GET  /api/marketplace/vendors       ?country=GH
-GET  /api/marketplace/vendors/{id}
-POST /api/marketplace/vendors/register
-POST /api/marketplace/orders
-GET  /api/marketplace/orders/my
-```
+| Account | Email | Password |
+|---|---|---|
+| Admin | admin@dishaspora.com | Admin123! |
+| User (GH, premium) | ama@demo.com | Demo123! |
+| User (NG) | chinedu@demo.com | Demo123! |
+| Vendor (GH) | vendor.gh@demo.com | Demo123! |
+| Vendor (NG) | vendor.ng@demo.com | Demo123! |
 
-### Nutrition (auth required)
-```
-GET  /api/nutrition/today
-POST /api/nutrition/log             { recipeId, servings, mealType }
-GET  /api/nutrition/history         ?days=7
-```
+## Environment variables (all optional — mock/fallback modes cover local dev)
 
-### Admin (ADMIN role only)
-```
-GET  /api/admin/stats
-GET  /api/admin/vendors/pending
-POST /api/admin/vendors/{id}/approve
-POST /api/admin/vendors/{id}/reject  { reason }
-GET  /api/admin/recipes/pending
-POST /api/admin/recipes/{id}/approve
-POST /api/admin/recipes/{id}/reject
-```
-
----
-
-## Testing with Postman
-
-1. **Register**: `POST /api/auth/register`
-2. **Login**: `POST /api/auth/login` — copy the `token`
-3. **Add header** to protected requests: `Authorization: Bearer <token>`
-4. **Admin login**: `admin@dishaspora.com` / `admin123`
-
----
-
-## Project Structure
-
-```
-dishaspora-backend/
-├── pom.xml
-└── src/main/java/com/dishaspora/
-    ├── DishasporaApplication.java      ← entry point
-    ├── config/
-    │   ├── SecurityConfig.java         ← CORS, JWT filter, role rules
-    │   ├── GlobalExceptionHandler.java ← clean error responses
-    │   └── DataSeeder.java             ← seeds admin + recipes on startup
-    ├── controller/
-    │   ├── AuthController.java
-    │   ├── RecipeController.java
-    │   ├── MarketplaceController.java
-    │   ├── NutritionController.java
-    │   └── AdminController.java
-    ├── service/
-    │   ├── AuthService.java
-    │   ├── RecipeService.java
-    │   ├── VendorService.java
-    │   ├── NutritionService.java
-    │   └── AdminService.java
-    ├── entity/
-    │   ├── User.java
-    │   ├── Recipe.java
-    │   ├── Vendor.java
-    │   └── MarketplaceEntities.java
-    ├── repository/
-    │   ├── UserRepository.java
-    │   └── RecipeRepository.java
-    ├── security/
-    │   ├── JwtService.java
-    │   └── JwtAuthFilter.java
-    └── dto/
-        └── AuthDtos.java
-```
+| Var | Purpose |
+|---|---|
+| `PAYSTACK_SECRET_KEY` / `PAYSTACK_PUBLIC_KEY` | Real Paystack test-mode payments (blank = simulated checkout) |
+| `ANTHROPIC_API_KEY` | Claude-powered AI assistant (blank = rule-based fallback) |

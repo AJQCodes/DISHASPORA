@@ -1,0 +1,6 @@
+package com.dishaspora.common.dto;
+
+import java.util.List;
+
+public record PageDto<T>(List<T> content, long totalElements, int totalPages) {
+}
