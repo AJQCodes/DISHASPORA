@@ -61,10 +61,7 @@ function DishOfTheDay({ recipes }: { recipes: Recipe[] }) {
     ],
   }));
   const photoFloat = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: (t.value - 0.5) * 8 },
-      { rotate: '-8deg' },
-    ],
+    transform: [{ translateY: (t.value - 0.5) * 8 }],
   }));
 
   if (featured.length === 0) return null;
@@ -86,7 +83,6 @@ function DishOfTheDay({ recipes }: { recipes: Recipe[] }) {
         >
           <View style={styles.heroLeft}>
             <View style={styles.heroPill}>
-              <Ionicons name="sparkles" size={10} color="#FFFFFF" />
               <Text style={styles.heroPillText}>DISH OF THE DAY</Text>
             </View>
             <View style={styles.heroTitleRow}>
@@ -329,11 +325,12 @@ const styles = StyleSheet.create({
   hero: {
     borderRadius: 28,
     flexDirection: 'row',
+    alignItems: 'center',
     overflow: 'hidden',
-    minHeight: 190,
+    height: 200,
     ...shadowStrong,
   },
-  heroLeft: { flex: 1.25, padding: 18, justifyContent: 'center' },
+  heroLeft: { flex: 1, padding: 18, justifyContent: 'center' },
   heroPill: {
     alignSelf: 'flex-start',
     flexDirection: 'row',
@@ -366,17 +363,19 @@ const styles = StyleSheet.create({
   },
   dotActive: { backgroundColor: '#FFFFFF', width: 16 },
   heroPhotoWrap: {
-    flex: 1,
-    margin: 8,
-    marginRight: -30,
-    borderRadius: 999,
+    width: 176,
+    height: 176,
+    borderRadius: 88,
+    marginRight: -44,
+    overflow: 'hidden',
+    borderWidth: 5,
+    borderColor: 'rgba(255,255,255,0.35)',
+    backgroundColor: 'rgba(255,255,255,0.2)',
     ...shadowStrong,
   },
   heroPhoto: {
-    width: '100%',
-    height: '100%',
-    minHeight: 170,
-    borderRadius: 200,
+    width: 176,
+    height: 176,
   },
   storiesRow: { paddingHorizontal: 20, gap: 14, paddingBottom: 4, marginBottom: 20 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },

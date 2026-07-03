@@ -37,6 +37,9 @@ export default function PrimaryButton({
       style={[(disabled || loading) && { opacity: 0.5 }, style]}
     >
       <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.8}
         style={[
           styles.base,
           small && styles.small,
@@ -63,7 +66,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     overflow: 'hidden',
   },
-  small: { paddingVertical: 9, paddingHorizontal: 16 },
+  small: { paddingVertical: 11, paddingHorizontal: 10 },
   outline: { borderWidth: 1.5, borderColor: colors.ink },
   text: { fontSize: 16, fontWeight: '600' },
   textSmall: { fontSize: 13 },

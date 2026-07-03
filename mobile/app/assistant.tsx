@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
@@ -22,10 +23,19 @@ import { useAuth } from '@/context/AuthContext';
 import { colors, shadow } from '@/theme';
 import type { AssistantMessage, AssistantResponse, Recipe } from '@/types';
 
-const SUGGESTIONS = [
-  'What can I cook with plantain?',
-  'Fast meals under 30 min',
-  'Low calorie Nigerian dishes',
+const SUGGESTIONS: { text: string; img: string }[] = [
+  {
+    text: 'What can I cook with plantain?',
+    img: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=96&h=96&fit=crop&q=80&auto=format',
+  },
+  {
+    text: 'Fast meals under 30 min',
+    img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=96&h=96&fit=crop&q=80&auto=format',
+  },
+  {
+    text: 'Low calorie Nigerian dishes',
+    img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=96&h=96&fit=crop&q=80&auto=format',
+  },
 ];
 
 interface Bubble {
@@ -168,8 +178,16 @@ export default function Assistant() {
           contentContainerStyle={styles.suggestions}
         >
           {SUGGESTIONS.map((s) => (
-            <TouchableOpacity key={s} style={styles.suggestionChip} onPress={() => send(s)}>
-              <Text style={styles.suggestionText}>{s}</Text>
+            <TouchableOpacity
+              key={s.text}
+              style={styles.suggestionChip}
+              onPress={() => send(s.text)}
+              activeOpacity={0.8}
+            >
+              <Image source={{ uri: s.img }} style={styles.suggestionImg} contentFit="cover" />
+              <Text style={styles.suggestionText} numberOfLines={1}>
+                {s.text}
+              </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -247,14 +265,22 @@ const styles = StyleSheet.create({
   },
   assistantText: { fontSize: 14, color: colors.ink, lineHeight: 20 },
   typing: { fontSize: 13, color: colors.inkFaint, fontStyle: 'italic' },
-  suggestions: { paddingHorizontal: 20, gap: 8, paddingVertical: 10 },
+  suggestions: { paddingHorizontal: 20, gap: 8, paddingVertical: 10, alignItems: 'center' },
   suggestionChip: {
-    backgroundColor: colors.blueLight,
-    borderRadius: 999,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    height: 40,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: colors.surfaceAlt,
+    borderRadius: 20,
+    paddingLeft: 5,
+    paddingRight: 14,
+    ...shadow,
   },
-  suggestionText: { fontSize: 12.5, color: colors.blueDark, fontWeight: '600' },
+  suggestionImg: { width: 30, height: 30, borderRadius: 15 },
+  suggestionText: { fontSize: 12.5, color: colors.ink, fontWeight: '600' },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
