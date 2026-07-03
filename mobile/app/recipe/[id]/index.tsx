@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
-import { Audio, ResizeMode, Video } from 'expo-av';
+import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Animated, {
@@ -51,8 +52,6 @@ export default function RecipeDetail() {
   const [checked, setChecked] = useState<Record<number, boolean>>({});
   const [reviewText, setReviewText] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [audioPlaying, setAudioPlaying] = useState(false);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const offset = useScrollViewOffset(scrollRef);
@@ -115,32 +114,33 @@ export default function RecipeDetail() {
     onError: () => Alert.alert('Could not post review', 'Please try again.'),
   });
 
-  const toggleAudio = async (url: string) => {
+  // Premium media players (expo-video / expo-audio, SDK 54).
+  // Hooks must run unconditionally, so sources are derived before early returns
+  // and swapped in via replace() once the recipe loads.
+  const videoSource = user?.premium ? IMG(recipe.data?.videoUrl) ?? null : null;
+  const audioSource = user?.premium ? IMG(recipe.data?.audioUrl) ?? null : null;
+  const videoPlayer = useVideoPlayer(null);
+  const audioPlayer = useAudioPlayer(null);
+  const audioStatus = useAudioPlayerStatus(audioPlayer);
+  React.useEffect(() => {
+    if (videoSource) videoPlayer.replace(videoSource);
+  }, [videoSource, videoPlayer]);
+  React.useEffect(() => {
+    if (audioSource) audioPlayer.replace(audioSource);
+  }, [audioSource, audioPlayer]);
+  const audioPlaying = audioStatus.playing;
+
+  const toggleAudio = () => {
     try {
-      if (sound && audioPlaying) {
-        await sound.pauseAsync();
-        setAudioPlaying(false);
-        return;
+      if (audioPlaying) {
+        audioPlayer.pause();
+      } else {
+        audioPlayer.play();
       }
-      if (sound) {
-        await sound.playAsync();
-        setAudioPlaying(true);
-        return;
-      }
-      const { sound: s } = await Audio.Sound.createAsync({ uri: IMG(url)! });
-      setSound(s);
-      await s.playAsync();
-      setAudioPlaying(true);
     } catch {
       Alert.alert('Playback error', 'Could not play the audio guide.');
     }
   };
-
-  React.useEffect(() => {
-    return () => {
-      sound?.unloadAsync();
-    };
-  }, [sound]);
 
   if (recipe.isLoading) return <LoadingView />;
   if (recipe.isError || !recipe.data)
@@ -310,17 +310,17 @@ export default function RecipeDetail() {
               {user?.premium && (rec.videoUrl || rec.audioUrl) ? (
                 <View style={{ gap: 12 }}>
                   {rec.videoUrl ? (
-                    <Video
-                      source={{ uri: IMG(rec.videoUrl)! }}
+                    <VideoView
+                      player={videoPlayer}
                       style={styles.video}
-                      useNativeControls
-                      resizeMode={ResizeMode.COVER}
+                      nativeControls
+                      contentFit="cover"
                     />
                   ) : null}
                   {rec.audioUrl ? (
                     <TouchableOpacity
                       style={styles.audioRow}
-                      onPress={() => toggleAudio(rec.audioUrl!)}
+                      onPress={toggleAudio}
                       activeOpacity={0.8}
                     >
                       <View style={styles.audioBtn}>

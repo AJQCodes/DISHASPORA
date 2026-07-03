@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
-import Animated, { FadeInDown, Layout } from 'react-native-reanimated';
+import Animated, { FadeInDown, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { api } from '@/api';
 import EmptyState from '@/components/EmptyState';
@@ -72,7 +72,7 @@ export default function Cart() {
               <Animated.View
                 key={item.listing.id}
                 entering={FadeInDown.delay(i * 50).duration(300)}
-                layout={Layout.springify()}
+                layout={LinearTransition.springify()}
               >
                 <StepperRow
                   item={item}
@@ -83,7 +83,7 @@ export default function Cart() {
             ))}
           </View>
 
-          <Animated.View layout={Layout.springify()} style={styles.summaryCard}>
+          <Animated.View layout={LinearTransition.springify()} style={styles.summaryCard}>
             <SummaryBlock
               subtotalMinor={cart.subtotalMinor}
               feeMinor={feeMinor}
