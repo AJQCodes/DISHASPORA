@@ -82,7 +82,7 @@ export default function Onboarding() {
 
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) + 8 }]}>
         <View style={styles.logoChip}>
-          <Image source={require('../assets/images/logo.png')} style={styles.logoImg} contentFit="cover" />
+          <Image source={require('../assets/images/dishaspora-logo.png')} style={styles.logoImg} contentFit="cover" />
         </View>
         <View style={styles.dots}>
           {SLIDES.map((_, i) => (

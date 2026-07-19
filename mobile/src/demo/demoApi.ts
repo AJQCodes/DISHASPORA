@@ -8,6 +8,7 @@ import type {
   Country,
   Listing,
   Order,
+  PassportStamp,
   PaystackInit,
   Recipe,
   Review,
@@ -27,6 +28,7 @@ import {
   demoThreads,
   demoUser,
   PHOTOS,
+  youtubeSearch,
 } from './demoData';
 
 type Query = Record<string, string | number | boolean | null | undefined>;
@@ -113,11 +115,63 @@ function parseSmart(q: string): SmartSearchFilters {
   if (/low[- ]calorie|light|healthy/.test(lower) && !filters.maxCalories) filters.maxCalories = 450;
   if (/ghana|ghanaian/.test(lower)) filters.cuisine = 'Ghanaian';
   if (/nigeria|nigerian|naija/.test(lower)) filters.cuisine = 'Nigerian';
+  if (/italy|italian/.test(lower)) filters.cuisine = 'Italian';
+  if (/france|french/.test(lower)) filters.cuisine = 'French';
+  if (/greece|greek/.test(lower)) filters.cuisine = 'Greek';
+  if (/spain|spanish/.test(lower)) filters.cuisine = 'Spanish';
+  if (/china|chinese/.test(lower)) filters.cuisine = 'Chinese';
+  if (/japan|japanese/.test(lower)) filters.cuisine = 'Japanese';
+  if (/thai|thailand/.test(lower)) filters.cuisine = 'Thai';
+  if (/korea|korean/.test(lower)) filters.cuisine = 'Korean';
+  if (/india|indian/.test(lower)) filters.cuisine = 'Indian';
+  if (/mexico|mexican/.test(lower)) filters.cuisine = 'Mexican';
+  if (/middle[- ]eastern|lebanese|lebanon/.test(lower)) filters.cuisine = 'Middle Eastern';
   if (/\bdrink|juice|cocktail|mocktail\b/.test(lower)) filters.category = 'DRINK';
   const keywords = ['plantain', 'rice', 'bean', 'yam', 'fish', 'chicken', 'beef', 'soup', 'stew', 'pepper', 'egusi', 'jollof', 'waakye', 'suya', 'banku'];
   const found = keywords.find((k) => lower.includes(k));
   if (found) filters.q = found;
   return filters;
+}
+
+/**
+ * Maps a recipe's countryOfOrigin onto passport identity. The demo data mixes
+ * ISO-2 codes for the West African dishes with full country names for the
+ * international ones, so both spellings resolve here.
+ */
+const COUNTRY_META: Record<string, { code: string; name: string }> = {
+  GH: { code: 'GH', name: 'Ghana' },
+  NG: { code: 'NG', name: 'Nigeria' },
+  ITALY: { code: 'IT', name: 'Italy' },
+  FRANCE: { code: 'FR', name: 'France' },
+  GREECE: { code: 'GR', name: 'Greece' },
+  SPAIN: { code: 'ES', name: 'Spain' },
+  CHINA: { code: 'CN', name: 'China' },
+  JAPAN: { code: 'JP', name: 'Japan' },
+  THAILAND: { code: 'TH', name: 'Thailand' },
+  'SOUTH KOREA': { code: 'KR', name: 'South Korea' },
+  INDIA: { code: 'IN', name: 'India' },
+  MEXICO: { code: 'MX', name: 'Mexico' },
+  LEBANON: { code: 'LB', name: 'Lebanon' },
+};
+
+/** Finds the passport stamp for a recipe's country, creating it on first cook. */
+function stampFor(rec: Recipe): PassportStamp {
+  const key = (rec.countryOfOrigin ?? '').toUpperCase();
+  const meta = COUNTRY_META[key] ?? { code: key || 'XX', name: rec.countryOfOrigin || 'Unknown' };
+  const existing = state.passport.stamps.find((s) => s.country === meta.code);
+  if (existing) return existing;
+  const created: PassportStamp = {
+    country: meta.code,
+    countryName: meta.name,
+    cuisine: rec.cuisine,
+    flagEmoji: meta.code,
+    recipesCooked: 0,
+    totalRecipes: demoRecipes.filter((r) => (r.countryOfOrigin ?? '').toUpperCase() === key).length,
+    stamped: false,
+    firstCookedAt: null,
+  };
+  state.passport.stamps.push(created);
+  return created;
 }
 
 function smartRecipes(filters: SmartSearchFilters): Recipe[] {
@@ -266,6 +320,7 @@ export async function demoResolve<T>(
       hasAudio: !!body?.audioUrl,
       videoUrl: body?.videoUrl ?? null,
       audioUrl: body?.audioUrl ?? null,
+      videoSearchUrl: body?.title ? youtubeSearch(body.title) : null,
       story: null,
       storyImageUrl: null,
       vendorId: state.myVendor?.id ?? null,
@@ -292,8 +347,7 @@ export async function demoResolve<T>(
     const rec = findRecipe(Number(cookedMatch[1]));
     const firstCook = !rec.cookedByMe;
     rec.cookedByMe = true;
-    const country = rec.countryOfOrigin === 'NG' ? 'NG' : rec.countryOfOrigin === 'GH' ? 'GH' : 'GH';
-    const stamp = state.passport.stamps.find((s) => s.country === country) ?? state.passport.stamps[0];
+    const stamp = stampFor(rec);
     if (firstCook) {
       state.passport.totalCooked += 1;
       stamp.recipesCooked += 1;

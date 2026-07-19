@@ -38,12 +38,15 @@ Recipe {
   "cuisine": "Ghanaian", "countryOfOrigin": "GH",  // ISO or free country name for foreign
   "mealType": "BREAKFAST|LUNCH|DINNER|SNACK|DRINK",
   "imageUrl": "/images/recipe-1.png",
-  "calories": 620, "servings": 4, "prepMinutes": 20, "cookMinutes": 45,
+  "calories": 620,                                       // PER SERVING; clients multiply by servings for a batch total
+  "servings": 4, "prepMinutes": 20, "cookMinutes": 45,   // the recipe's own yield; clients may rescale locally
   "mealFrequency": "2-3 times per week", "mealFrequencyReason": "Balanced but rice-heavy...",
   "ingredients": [Ingredient], "steps": [RecipeStep],
   "story": "Cultural narrative text...",                 // Food Story
   "storyImageUrl": "/images/story-1.png",
   "videoUrl": null | "/uploads/x.mp4",                   // premium-gated: null for non-premium callers
+  "videoSearchUrl": "https://www.youtube.com/results?search_query=Jollof%20Rice%20recipe",
+                                                         // NOT gated; server derives one from the title when unset
   "audioUrl": null | "/uploads/x.mp3",                   // premium-gated
   "hasVideo": true, "hasAudio": true,                    // always visible flags
   "vendorId": 1, "vendorName": "Auntie Ama's Kitchen",

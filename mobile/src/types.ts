@@ -72,6 +72,8 @@ export interface Recipe {
   story: string | null;
   storyImageUrl: string | null;
   videoUrl: string | null;
+  /** Public YouTube search link for the dish — never premium-gated. */
+  videoSearchUrl: string | null;
   audioUrl: string | null;
   hasVideo: boolean;
   hasAudio: boolean;

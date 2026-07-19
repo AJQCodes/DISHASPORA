@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import {
   Alert,
   Dimensions,
+  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -37,6 +38,7 @@ import { IMG } from '@/config';
 import { useAuth } from '@/context/AuthContext';
 import { colors, shadow, shadowStrong } from '@/theme';
 import type { Listing, Page, Recipe, Review } from '@/types';
+import { MAX_SERVINGS, MIN_SERVINGS, scaleRecipe } from '@/utils/scaling';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 const HERO_H = 320;
@@ -50,6 +52,8 @@ export default function RecipeDetail() {
   const queryClient = useQueryClient();
   const [basketOpen, setBasketOpen] = useState(false);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
+  /** null until the cook overrides it, so we always track the recipe's own yield. */
+  const [servingsOverride, setServingsOverride] = useState<number | null>(null);
   const [reviewText, setReviewText] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
 
@@ -147,7 +151,22 @@ export default function RecipeDetail() {
     return <ErrorView message="Could not load this recipe." onRetry={() => recipe.refetch()} />;
 
   const rec = recipe.data;
-  const totalMin = rec.prepMinutes + rec.cookMinutes;
+  const servings = servingsOverride ?? rec.servings;
+  const scaled = scaleRecipe(rec, servings);
+  const totalMin = scaled.totalMinutes;
+  const isRescaled = servings !== rec.servings;
+  const setServings = (next: number) =>
+    setServingsOverride(Math.min(MAX_SERVINGS, Math.max(MIN_SERVINGS, next)));
+
+  const watchPreparation = async () => {
+    const url = rec.videoSearchUrl;
+    if (!url) return;
+    try {
+      await Linking.openURL(url);
+    } catch {
+      Alert.alert('Could not open YouTube', 'Try searching for this dish manually.');
+    }
+  };
   const contactVendor = async () => {
     if (!rec.vendorId) return;
     try {
@@ -189,8 +208,8 @@ export default function RecipeDetail() {
               </Text>
             </View>
             <View style={styles.calBadge}>
-              <Text style={styles.calValue}>{rec.calories}</Text>
-              <Text style={styles.calUnit}>kcal</Text>
+              <Text style={styles.calValue}>{scaled.caloriesPerServing}</Text>
+              <Text style={styles.calUnit}>kcal each</Text>
             </View>
           </Animated.View>
 
@@ -202,11 +221,53 @@ export default function RecipeDetail() {
           <Animated.View entering={FadeInDown.delay(90).duration(320)} style={{ marginTop: 14 }}>
             <MetaRow
               items={[
-                { icon: 'people-outline', label: `${rec.servings} servings` },
+                { icon: 'people-outline', label: `${servings} servings` },
                 { icon: 'time-outline', label: `${totalMin} min total` },
-                { icon: 'flame-outline', label: `${rec.calories} Kcal` },
+                { icon: 'flame-outline', label: `${scaled.caloriesTotal} Kcal total` },
               ]}
             />
+          </Animated.View>
+
+          {/* Servings scaler — drives ingredients, times and total calories */}
+          <Animated.View entering={FadeInDown.delay(110).duration(320)} style={styles.servingsCard}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.servingsTitle}>Cooking for</Text>
+              <Text style={styles.servingsHint}>
+                {isRescaled
+                  ? `Scaled from the original ${rec.servings}`
+                  : 'Adjust to rescale the whole recipe'}
+              </Text>
+            </View>
+            {isRescaled ? (
+              <TouchableOpacity
+                onPress={() => setServingsOverride(null)}
+                style={styles.resetBtn}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.resetText}>Reset</Text>
+              </TouchableOpacity>
+            ) : null}
+            <View style={styles.stepper}>
+              <TouchableOpacity
+                onPress={() => setServings(servings - 1)}
+                disabled={servings <= MIN_SERVINGS}
+                style={[styles.stepBtn, servings <= MIN_SERVINGS && styles.stepBtnOff]}
+                activeOpacity={0.7}
+                accessibilityLabel="Fewer servings"
+              >
+                <Ionicons name="remove" size={18} color={colors.brandDark} />
+              </TouchableOpacity>
+              <Text style={styles.stepValue}>{servings}</Text>
+              <TouchableOpacity
+                onPress={() => setServings(servings + 1)}
+                disabled={servings >= MAX_SERVINGS}
+                style={[styles.stepBtn, servings >= MAX_SERVINGS && styles.stepBtnOff]}
+                activeOpacity={0.7}
+                accessibilityLabel="More servings"
+              >
+                <Ionicons name="add" size={18} color={colors.brandDark} />
+              </TouchableOpacity>
+            </View>
           </Animated.View>
 
           {/* Meal frequency card */}
@@ -224,7 +285,7 @@ export default function RecipeDetail() {
           <Animated.View entering={FadeInDown.delay(170).duration(320)}>
             <Text style={styles.sectionTitle}>Ingredients</Text>
             <View style={styles.card}>
-              {rec.ingredients.map((ingredient, i) => {
+              {scaled.ingredients.map((ingredient, i) => {
                 const on = !!checked[i];
                 return (
                   <TouchableOpacity
@@ -272,6 +333,28 @@ export default function RecipeDetail() {
               ) : null}
             </View>
           </Animated.View>
+
+          {/* Watch someone cook it — opens a YouTube search, free for everyone */}
+          {rec.videoSearchUrl ? (
+            <Animated.View entering={FadeInDown.delay(230).duration(320)}>
+              <TouchableOpacity
+                style={styles.watchBtn}
+                onPress={watchPreparation}
+                activeOpacity={0.85}
+                accessibilityRole="link"
+                accessibilityLabel={`Watch how to prepare ${rec.title} on YouTube`}
+              >
+                <View style={styles.watchIcon}>
+                  <Ionicons name="logo-youtube" size={19} color="#FF0000" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.watchTitle}>Watch the preparation</Text>
+                  <Text style={styles.watchSub}>See {rec.title} made on YouTube</Text>
+                </View>
+                <Ionicons name="open-outline" size={17} color={colors.brandDark} />
+              </TouchableOpacity>
+            </Animated.View>
+          ) : null}
 
           {/* Food Story */}
           {rec.story ? (
@@ -444,7 +527,10 @@ export default function RecipeDetail() {
           variant="outline"
           small
           onPress={() =>
-            router.push({ pathname: '/recipe/[id]/cook', params: { id: String(rec.id) } })
+            router.push({
+              pathname: '/recipe/[id]/cook',
+              params: { id: String(rec.id), servings: String(servings) },
+            })
           }
           style={{ flex: 1 }}
         />
@@ -498,6 +584,69 @@ const styles = StyleSheet.create({
   },
   calValue: { fontSize: 18, fontWeight: '800', color: colors.accentDark },
   calUnit: { fontSize: 10, color: colors.accentDark, fontWeight: '600' },
+  servingsCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.brandLight,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginTop: 14,
+    ...shadow,
+  },
+  servingsTitle: { fontSize: 14, fontWeight: '700', color: colors.brandDark },
+  servingsHint: { fontSize: 11, color: colors.inkSoft, marginTop: 2 },
+  resetBtn: { paddingHorizontal: 10, paddingVertical: 6 },
+  resetText: { fontSize: 12, fontWeight: '700', color: colors.accentDark },
+  stepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors.brandLight,
+    borderRadius: 14,
+    padding: 4,
+  },
+  stepBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stepBtnOff: { opacity: 0.35 },
+  stepValue: {
+    minWidth: 28,
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '800',
+    color: colors.brandDark,
+  },
+  watchBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.brandLight,
+    padding: 14,
+    marginTop: 14,
+    ...shadow,
+  },
+  watchIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 13,
+    backgroundColor: colors.brandLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  watchTitle: { fontSize: 14, fontWeight: '700', color: colors.brandDark },
+  watchSub: { fontSize: 11, color: colors.inkSoft, marginTop: 2 },
   freqCard: {
     flexDirection: 'row',
     gap: 12,
