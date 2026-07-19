@@ -26,15 +26,15 @@ import type { AssistantMessage, AssistantResponse, Recipe } from '@/types';
 const SUGGESTIONS: { text: string; img: string }[] = [
   {
     text: 'What can I cook with plantain?',
-    img: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=96&h=96&fit=crop&q=80&auto=format',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Banane_plantain_de_la_RCA.jpg/240px-Banane_plantain_de_la_RCA.jpg',
   },
   {
     text: 'Fast meals under 30 min',
-    img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=96&h=96&fit=crop&q=80&auto=format',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/SuyavarietiesTX.JPG/240px-SuyavarietiesTX.JPG',
   },
   {
     text: 'Low calorie Nigerian dishes',
-    img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=96&h=96&fit=crop&q=80&auto=format',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Fish_pepper_soup.jpg/240px-Fish_pepper_soup.jpg',
   },
 ];
 

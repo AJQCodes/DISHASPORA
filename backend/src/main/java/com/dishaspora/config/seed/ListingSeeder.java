@@ -115,10 +115,10 @@ public class ListingSeeder {
     private void seedPending(Vendor gh, Vendor ngGrocer) {
         s.listing(gh, ListingType.FOOD, "Fufu Friday Bundle",
                 "Fufu with light soup and goat meat, Fridays only.",
-                19, 5500, null, 10, "1", "pack", 45, s.recipeIdByTitle("Fufu & Light Soup"),
+                26, 5500, null, 10, "1", "pack", 45, s.recipeIdByTitle("Fufu & Light Soup"),
                 ApprovalStatus.PENDING);
         s.listing(ngGrocer, ListingType.INGREDIENT, "Dried Crayfish",
                 "Aromatic dried crayfish, whole and ground options.",
-                20, 45000, null, 30, "250", "g", null, null, ApprovalStatus.PENDING);
+                27, 45000, null, 30, "250", "g", null, null, ApprovalStatus.PENDING);
     }
 }
