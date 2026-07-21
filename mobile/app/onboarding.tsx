@@ -22,7 +22,7 @@ const SLIDES = [
   {
     image: require('../assets/images/onboarding-1.png'),
     title: ['Taste of Home,', 'Wherever You Are'],
-    sub: 'Authentic Ghanaian and Nigerian recipes with the stories behind every dish — cook the food you grew up with.',
+    sub: 'Authentic Ghanaian and continental recipes with the stories behind every dish — cook the food you grew up with.',
   },
   {
     image: require('../assets/images/onboarding-2.png'),
