@@ -1,0 +1,20 @@
+package com.dishaspora.auth.dto;
+
+import com.dishaspora.auth.entity.User;
+
+public record UserDto(Long id, String name, String email, String role, String country,
+                      String avatarUrl, boolean premium, String premiumUntil, Long vendorId) {
+
+    public static UserDto from(User user) {
+        return new UserDto(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole().name(),
+                user.getCountry(),
+                user.getAvatarUrl(),
+                user.isPremiumActive(),
+                user.getPremiumUntil() == null ? null : user.getPremiumUntil().toString(),
+                user.getVendorId());
+    }
+}

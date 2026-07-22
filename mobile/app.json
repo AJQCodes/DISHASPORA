@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Dishaspora",
+    "slug": "dishaspora",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/dishaspora-logo.png",
+    "scheme": "dishaspora",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/dishaspora-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FDF5EA"
+    },
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/dishaspora-logo.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.dishaspora.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-video",
+      "expo-audio",
+      "expo-font",
+      "expo-asset",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
