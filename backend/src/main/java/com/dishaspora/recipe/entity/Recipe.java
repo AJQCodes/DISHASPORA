@@ -68,6 +68,12 @@ public class Recipe {
 
     private String videoUrl;
 
+    /**
+     * Public "watch it being cooked" link. Unlike videoUrl this is never premium-gated,
+     * and the mapper derives one from the title when it is not set.
+     */
+    private String videoSearchUrl;
+
     private String audioUrl;
 
     @Column(nullable = false)
@@ -126,6 +132,9 @@ public class Recipe {
     public void setStoryImageUrl(String storyImageUrl) { this.storyImageUrl = storyImageUrl; }
     public String getVideoUrl() { return videoUrl; }
     public void setVideoUrl(String videoUrl) { this.videoUrl = videoUrl; }
+
+    public String getVideoSearchUrl() { return videoSearchUrl; }
+    public void setVideoSearchUrl(String videoSearchUrl) { this.videoSearchUrl = videoSearchUrl; }
     public String getAudioUrl() { return audioUrl; }
     public void setAudioUrl(String audioUrl) { this.audioUrl = audioUrl; }
     public Long getVendorId() { return vendorId; }

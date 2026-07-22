@@ -26,15 +26,18 @@ public class DataSeeder implements CommandLineRunner {
     private final GhanaRecipeSeeder ghanaRecipes;
     private final NigeriaRecipeSeeder nigeriaRecipes;
     private final WorldRecipeSeeder worldRecipes;
+    private final InternationalRecipeSeeder internationalRecipes;
     private final ListingSeeder listingSeeder;
     private final MiscSeeder miscSeeder;
 
     public DataSeeder(SeedSupport s, GhanaRecipeSeeder ghanaRecipes, NigeriaRecipeSeeder nigeriaRecipes,
-                      WorldRecipeSeeder worldRecipes, ListingSeeder listingSeeder, MiscSeeder miscSeeder) {
+                      WorldRecipeSeeder worldRecipes, InternationalRecipeSeeder internationalRecipes,
+                      ListingSeeder listingSeeder, MiscSeeder miscSeeder) {
         this.s = s;
         this.ghanaRecipes = ghanaRecipes;
         this.nigeriaRecipes = nigeriaRecipes;
         this.worldRecipes = worldRecipes;
+        this.internationalRecipes = internationalRecipes;
         this.listingSeeder = listingSeeder;
         this.miscSeeder = miscSeeder;
     }
@@ -96,6 +99,11 @@ public class DataSeeder implements CommandLineRunner {
         worldRecipes.seedContinental(vGhKitchen, vNgKitchen);
         worldRecipes.seedDrinks(vGh, vNg);
         worldRecipes.seedPending(vGh, vNg);
+
+        // ---- International dishes (29 more, external dish photography) ----
+        internationalRecipes.seedEurope(vGhKitchen);
+        internationalRecipes.seedAsia(vNgKitchen);
+        internationalRecipes.seedGlobal(vGhKitchen);
 
         // ---- Listings (40 approved + 2 pending) ----
         listingSeeder.seed(vGh, vNg, vGhGrocer, vNgGrocer);

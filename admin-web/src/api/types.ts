@@ -68,6 +68,7 @@ export interface Recipe {
   story: string;
   storyImageUrl: string | null;
   videoUrl: string | null;
+  videoSearchUrl: string | null;
   audioUrl: string | null;
   hasVideo: boolean;
   hasAudio: boolean;

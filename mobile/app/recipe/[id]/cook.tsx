@@ -29,6 +29,7 @@ import { ErrorView, LoadingView } from '@/components/StatusViews';
 import { IMG } from '@/config';
 import { colors, shadowStrong } from '@/theme';
 import type { CookedResponse, Recipe } from '@/types';
+import { scaleSteps } from '@/utils/scaling';
 
 const CONFETTI = Array.from({ length: 14 }).map((_, i) => ({
   angle: (i / 14) * Math.PI * 2,
@@ -110,7 +111,7 @@ function StampModal({
 }
 
 export default function SnapAndCook() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, servings } = useLocalSearchParams<{ id: string; servings?: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const queryClient = useQueryClient();
@@ -133,7 +134,15 @@ export default function SnapAndCook() {
     },
   });
 
-  const steps = recipe.data?.steps ?? [];
+  // Honour the serving count chosen on the detail screen so the step timers
+  // match the batch actually being cooked.
+  const steps = useMemo(() => {
+    const rec = recipe.data;
+    if (!rec) return [];
+    const target = Number(servings);
+    if (!Number.isFinite(target) || target < 1) return rec.steps;
+    return scaleSteps(rec.steps, target / (rec.servings > 0 ? rec.servings : 1));
+  }, [recipe.data, servings]);
   const step = steps[index];
 
   // countdown timer for steps with a duration

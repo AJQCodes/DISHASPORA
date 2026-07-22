@@ -152,6 +152,44 @@ public class SeedSupport {
         return recipes.save(r);
     }
 
+    /**
+     * Variant of {@link #recipe} for dishes whose photography lives on an external
+     * host rather than the bundled /images/recipe-N.png set. Also carries an explicit
+     * "watch the preparation" link.
+     */
+    public Recipe recipeWithMedia(Vendor vendor, String title, String description, RecipeCategory category,
+                                  String cuisine, String country, MealType mealType, String imageUrl,
+                                  int calories, int servings, int prepMinutes, int cookMinutes,
+                                  String mealFrequency, String mealFrequencyReason,
+                                  String story, int storyIdx, String videoSearchUrl,
+                                  double rating, int reviewCount, ApprovalStatus status,
+                                  List<Ingredient> ingredients, List<RecipeStep> steps) {
+        Recipe r = new Recipe();
+        r.setTitle(title);
+        r.setDescription(description);
+        r.setCategory(category);
+        r.setCuisine(cuisine);
+        r.setCountryOfOrigin(country);
+        r.setMealType(mealType);
+        r.setImageUrl(imageUrl);
+        r.setCalories(calories);
+        r.setServings(servings);
+        r.setPrepMinutes(prepMinutes);
+        r.setCookMinutes(cookMinutes);
+        r.setMealFrequency(mealFrequency);
+        r.setMealFrequencyReason(mealFrequencyReason);
+        r.setStory(story);
+        r.setStoryImageUrl("/images/story-" + (1 + ((storyIdx - 1) % 8)) + ".png");
+        r.setVideoSearchUrl(videoSearchUrl);
+        r.setVendorId(vendor.getId());
+        r.setStatus(status);
+        r.setRating(rating);
+        r.setReviewCount(reviewCount);
+        r.getIngredients().addAll(ingredients);
+        r.getSteps().addAll(steps);
+        return recipes.save(r);
+    }
+
     public Listing listing(Vendor vendor, ListingType type, String title, String description, int imgIdx,
                            long amountMinor, Long compareAtMinor, int stockQty, String quantity, String unit,
                            Integer prepMinutes, Long linkedRecipeId, ApprovalStatus status) {
@@ -159,7 +197,7 @@ public class SeedSupport {
         l.setType(type);
         l.setTitle(title);
         l.setDescription(description);
-        l.setImageUrl("/images/listing-" + (1 + ((imgIdx - 1) % 20)) + ".png");
+        l.setImageUrl("/images/listing-" + imgIdx + ".png");
         l.setAmountMinor(amountMinor);
         l.setCompareAtMinor(compareAtMinor);
         l.setCountry(vendor.getCountry());

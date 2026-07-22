@@ -34,7 +34,16 @@ public class SmartSearchService {
             Map.entry("naija", "Nigerian"),
             Map.entry("italian", "Italian"), Map.entry("american", "American"),
             Map.entry("lebanese", "Lebanese"), Map.entry("chinese", "Chinese"),
-            Map.entry("arabian", "Arabian"), Map.entry("continental", "Continental"));
+            Map.entry("arabian", "Arabian"), Map.entry("continental", "Continental"),
+            Map.entry("french", "French"), Map.entry("france", "French"),
+            Map.entry("greek", "Greek"), Map.entry("greece", "Greek"),
+            Map.entry("spanish", "Spanish"), Map.entry("spain", "Spanish"),
+            Map.entry("japanese", "Japanese"), Map.entry("japan", "Japanese"),
+            Map.entry("thai", "Thai"), Map.entry("thailand", "Thai"),
+            Map.entry("korean", "Korean"), Map.entry("korea", "Korean"),
+            Map.entry("indian", "Indian"), Map.entry("india", "Indian"),
+            Map.entry("mexican", "Mexican"), Map.entry("mexico", "Mexican"),
+            Map.entry("middle eastern", "Middle Eastern"));
 
     private static final Map<String, String> CATEGORY_WORDS = Map.of(
             "drink", "DRINK", "drinks", "DRINK", "juice", "DRINK", "smoothie", "DRINK",

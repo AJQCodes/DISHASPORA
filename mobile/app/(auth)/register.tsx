@@ -67,7 +67,7 @@ export default function Register() {
       >
         <Animated.View entering={FadeInDown.duration(400)} style={styles.logoBadge}>
           <Image
-            source={require('../../assets/images/logo.png')}
+            source={require('../../assets/images/dishaspora-logo.png')}
             style={styles.logo}
             contentFit="cover"
           />

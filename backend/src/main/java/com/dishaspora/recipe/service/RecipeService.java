@@ -249,6 +249,7 @@ public class RecipeService {
         recipe.setStory(request.story());
         recipe.setStoryImageUrl(request.storyImageUrl());
         recipe.setVideoUrl(request.videoUrl());
+        recipe.setVideoSearchUrl(request.videoSearchUrl());
         recipe.setAudioUrl(request.audioUrl());
         recipe.getIngredients().clear();
         if (request.ingredients() != null) {

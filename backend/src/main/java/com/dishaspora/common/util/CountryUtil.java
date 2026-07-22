@@ -16,7 +16,12 @@ public final class CountryUtil {
             Map.entry("FRANCE", "France"),
             Map.entry("MEXICO", "Mexico"),
             Map.entry("INDIA", "India"),
-            Map.entry("SAUDI ARABIA", "Saudi Arabia")
+            Map.entry("SAUDI ARABIA", "Saudi Arabia"),
+            Map.entry("GREECE", "Greece"),
+            Map.entry("SPAIN", "Spain"),
+            Map.entry("JAPAN", "Japan"),
+            Map.entry("THAILAND", "Thailand"),
+            Map.entry("SOUTH KOREA", "South Korea")
     );
 
     private static final Map<String, String> FLAGS = Map.ofEntries(
@@ -30,7 +35,12 @@ public final class CountryUtil {
             Map.entry("FRANCE", "🇫🇷"),
             Map.entry("MEXICO", "🇲🇽"),
             Map.entry("INDIA", "🇮🇳"),
-            Map.entry("SAUDI ARABIA", "🇸🇦")
+            Map.entry("SAUDI ARABIA", "🇸🇦"),
+            Map.entry("GREECE", "🇬🇷"),
+            Map.entry("SPAIN", "🇪🇸"),
+            Map.entry("JAPAN", "🇯🇵"),
+            Map.entry("THAILAND", "🇹🇭"),
+            Map.entry("SOUTH KOREA", "🇰🇷")
     );
 
     public static String countryName(String code) {

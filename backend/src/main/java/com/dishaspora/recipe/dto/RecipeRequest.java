@@ -25,5 +25,6 @@ public record RecipeRequest(
         String story,
         String storyImageUrl,
         String videoUrl,
+        String videoSearchUrl,
         String audioUrl) {
 }

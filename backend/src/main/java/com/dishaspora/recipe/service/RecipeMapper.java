@@ -12,6 +12,8 @@ import com.dishaspora.recipe.repository.CookedRecipeRepository;
 import com.dishaspora.recipe.repository.SavedRecipeRepository;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,12 +57,27 @@ public class RecipeMapper {
                 mapIngredients(r.getIngredients()), mapSteps(r.getSteps()),
                 r.getStory(), r.getStoryImageUrl(),
                 premiumMedia ? r.getVideoUrl() : null,
+                videoSearchUrl(r),
                 premiumMedia ? r.getAudioUrl() : null,
                 r.getVideoUrl() != null, r.getAudioUrl() != null,
                 r.getVendorId(), vendor == null ? null : vendor.getName(),
                 r.getStatus().name(),
                 Math.round(r.getRating() * 10.0) / 10.0, r.getReviewCount(),
                 savedByMe, cookedByMe);
+    }
+
+    /**
+     * Every recipe gets a working "watch the preparation" link. Recipes that carry
+     * their own curated link keep it; the rest fall back to a YouTube search for the
+     * dish, which always resolves and never rots.
+     */
+    private static String videoSearchUrl(Recipe recipe) {
+        String stored = recipe.getVideoSearchUrl();
+        if (stored != null && !stored.isBlank()) return stored;
+        String title = recipe.getTitle();
+        if (title == null || title.isBlank()) return null;
+        return "https://www.youtube.com/results?search_query="
+                + URLEncoder.encode(title + " recipe", StandardCharsets.UTF_8);
     }
 
     private boolean canSeePremiumMedia(Recipe recipe, Vendor vendor, User user) {
