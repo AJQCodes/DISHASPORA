@@ -190,3 +190,7 @@ To use the **live backend**:
 - **`docs/API.md`** — full REST contract (endpoints, DTOs, auth rules, error shape)
 - **`docs/DESIGN.md`** — design system: palette, typography, signature UI patterns
 - **`docs/IMAGES.md`** — manifest mapping every bundled image to its source URL
+
+
+##Documentation
+This READMe was updated to improve project documentation
